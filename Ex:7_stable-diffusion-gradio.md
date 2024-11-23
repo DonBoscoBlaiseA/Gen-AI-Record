@@ -1,4 +1,4 @@
-## Prototype Development for Image Generation Using the Stable Diffusion Model and Gradio Framework
+## Ex:7 Prototype Development for Image Generation Using the Stable Diffusion Model and Gradio Framework
 
 
 ## **AIM**  
