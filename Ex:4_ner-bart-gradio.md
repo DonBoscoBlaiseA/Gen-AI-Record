@@ -1,309 +1,83 @@
-{
- "cells": [
-  {
-   "cell_type": "code",
-   "execution_count": 1,
-   "id": "c04360fb",
-   "metadata": {
-    "height": 149
-   },
-   "outputs": [],
-   "source": [
-    "import os\n",
-    "import io\n",
-    "from IPython.display import Image, display, HTML\n",
-    "from PIL import Image\n",
-    "import base64 \n",
-    "from dotenv import load_dotenv, find_dotenv\n",
-    "_ = load_dotenv(find_dotenv()) # read local .env file\n",
-    "hf_api_key = os.environ['HF_API_KEY']"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 2,
-   "id": "793b8c5e",
-   "metadata": {
-    "height": 302
-   },
-   "outputs": [],
-   "source": [
-    "# Helper function\n",
-    "import requests, json\n",
-    "\n",
-    "#Summarization endpoint\n",
-    "def get_completion(inputs, parameters=None,ENDPOINT_URL=os.environ['HF_API_SUMMARY_BASE']): \n",
-    "    headers = {\n",
-    "      \"Authorization\": f\"Bearer {hf_api_key}\",\n",
-    "      \"Content-Type\": \"application/json\"\n",
-    "    }\n",
-    "    data = { \"inputs\": inputs }\n",
-    "    if parameters is not None:\n",
-    "        data.update({\"parameters\": parameters})\n",
-    "    response = requests.request(\"POST\",\n",
-    "                                ENDPOINT_URL, headers=headers,\n",
-    "                                data=json.dumps(data)\n",
-    "                               )\n",
-    "    return json.loads(response.content.decode(\"utf-8\"))"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 3,
-   "id": "a61b4617",
-   "metadata": {
-    "height": 64
-   },
-   "outputs": [
-    {
-     "data": {
-      "text/plain": [
-       "[{'entity': 'B-PER',\n",
-       "  'score': 0.9990625,\n",
-       "  'index': 4,\n",
-       "  'word': 'Andrew',\n",
-       "  'start': 11,\n",
-       "  'end': 17},\n",
-       " {'entity': 'B-ORG',\n",
-       "  'score': 0.9927856,\n",
-       "  'index': 10,\n",
-       "  'word': 'Deep',\n",
-       "  'start': 32,\n",
-       "  'end': 36},\n",
-       " {'entity': 'I-ORG',\n",
-       "  'score': 0.99677867,\n",
-       "  'index': 11,\n",
-       "  'word': '##L',\n",
-       "  'start': 36,\n",
-       "  'end': 37},\n",
-       " {'entity': 'I-ORG',\n",
-       "  'score': 0.9954496,\n",
-       "  'index': 12,\n",
-       "  'word': '##ear',\n",
-       "  'start': 37,\n",
-       "  'end': 40},\n",
-       " {'entity': 'I-ORG',\n",
-       "  'score': 0.9959293,\n",
-       "  'index': 13,\n",
-       "  'word': '##ning',\n",
-       "  'start': 40,\n",
-       "  'end': 44},\n",
-       " {'entity': 'I-ORG',\n",
-       "  'score': 0.8917463,\n",
-       "  'index': 14,\n",
-       "  'word': '##A',\n",
-       "  'start': 44,\n",
-       "  'end': 45},\n",
-       " {'entity': 'I-ORG',\n",
-       "  'score': 0.5036118,\n",
-       "  'index': 15,\n",
-       "  'word': '##I',\n",
-       "  'start': 45,\n",
-       "  'end': 46},\n",
-       " {'entity': 'B-LOC',\n",
-       "  'score': 0.99969244,\n",
-       "  'index': 20,\n",
-       "  'word': 'California',\n",
-       "  'start': 61,\n",
-       "  'end': 71}]"
-      ]
-     },
-     "execution_count": 3,
-     "metadata": {},
-     "output_type": "execute_result"
-    }
-   ],
-   "source": [
-    "API_URL = os.environ['HF_API_NER_BASE'] #NER endpoint\n",
-    "text = \"My name is Andrew, I'm building DeepLearningAI and I live in California\"\n",
-    "get_completion(text, parameters=None, ENDPOINT_URL= API_URL)"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 5,
-   "id": "62295f62",
-   "metadata": {
-    "height": 251
-   },
-   "outputs": [
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "/usr/local/lib/python3.9/site-packages/gradio_client/documentation.py:105: UserWarning: Could not get documentation group for <class 'gradio.mix.Parallel'>: No known documentation group for module 'gradio.mix'\n",
-      "  warnings.warn(f\"Could not get documentation group for {cls}: {exc}\")\n",
-      "/usr/local/lib/python3.9/site-packages/gradio_client/documentation.py:105: UserWarning: Could not get documentation group for <class 'gradio.mix.Series'>: No known documentation group for module 'gradio.mix'\n",
-      "  warnings.warn(f\"Could not get documentation group for {cls}: {exc}\")\n"
-     ]
-    },
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "Running on local URL:  https://0.0.0.0:7862\n",
-      "IMPORTANT: You are using gradio version 3.37.0, however version 4.44.1 is available, please upgrade.\n",
-      "--------\n",
-      "\n",
-      "Could not create share link. Missing file: /usr/local/lib/python3.9/site-packages/gradio/frpc_linux_amd64_v0.2. \n",
-      "\n",
-      "Please check your internet connection. This can happen if your antivirus software blocks the download of this file. You can install manually by following these steps: \n",
-      "\n",
-      "1. Download this file: https://cdn-media.huggingface.co/frpc-gradio-0.2/frpc_linux_amd64\n",
-      "2. Rename the downloaded file to: frpc_linux_amd64_v0.2\n",
-      "3. Move the file to this location: /usr/local/lib/python3.9/site-packages/gradio\n"
-     ]
-    },
-    {
-     "data": {
-      "text/html": [
-       "<div><iframe src=\"https://s172-29-62-12p7862.lab-aws-production.deeplearning.ai/\" width=\"100%\" height=\"500\" allow=\"autoplay; camera; microphone; clipboard-read; clipboard-write;\" frameborder=\"0\" allowfullscreen></iframe></div>"
-      ],
-      "text/plain": [
-       "<IPython.core.display.HTML object>"
-      ]
-     },
-     "metadata": {},
-     "output_type": "display_data"
-    },
-    {
-     "data": {
-      "text/plain": []
-     },
-     "execution_count": 5,
-     "metadata": {},
-     "output_type": "execute_result"
-    }
-   ],
-   "source": [
-    "def ner(input):\n",
-    "    output = get_completion(input, parameters=None, ENDPOINT_URL=API_URL)\n",
-    "    return {\"text\": input, \"entities\": output}\n",
-    "import gradio as gr\n",
-    "gr.close_all()\n",
-    "demo = gr.Interface(fn=ner,\n",
-    "                    inputs=[gr.Textbox(label=\"Text to find entities\", lines=2)],\n",
-    "                    outputs=[gr.HighlightedText(label=\"Text with entities\")],\n",
-    "                    title=\"NER with dslim/bert-base-NER\",\n",
-    "                    description=\"Find entities using the `dslim/bert-base-NER` model under the hood!\",\n",
-    "                    allow_flagging=\"never\",\n",
-    "                    #Here we introduce a new tag, examples, easy to use examples for your application\n",
-    "                    examples=[\"My name is Andrew and I live in California\", \"My name is Poli and work at HuggingFace\"])\n",
-    "demo.launch(share=True, server_port=int(os.environ['PORT3']))"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 6,
-   "id": "12cf2481",
-   "metadata": {
-    "height": 540
-   },
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "Closing server running on port: 7862\n",
-      "Running on local URL:  https://0.0.0.0:7863\n",
-      "IMPORTANT: You are using gradio version 3.37.0, however version 4.44.1 is available, please upgrade.\n",
-      "--------\n",
-      "\n",
-      "Could not create share link. Missing file: /usr/local/lib/python3.9/site-packages/gradio/frpc_linux_amd64_v0.2. \n",
-      "\n",
-      "Please check your internet connection. This can happen if your antivirus software blocks the download of this file. You can install manually by following these steps: \n",
-      "\n",
-      "1. Download this file: https://cdn-media.huggingface.co/frpc-gradio-0.2/frpc_linux_amd64\n",
-      "2. Rename the downloaded file to: frpc_linux_amd64_v0.2\n",
-      "3. Move the file to this location: /usr/local/lib/python3.9/site-packages/gradio\n"
-     ]
-    },
-    {
-     "data": {
-      "text/html": [
-       "<div><iframe src=\"https://s172-29-62-12p7863.lab-aws-production.deeplearning.ai/\" width=\"100%\" height=\"500\" allow=\"autoplay; camera; microphone; clipboard-read; clipboard-write;\" frameborder=\"0\" allowfullscreen></iframe></div>"
-      ],
-      "text/plain": [
-       "<IPython.core.display.HTML object>"
-      ]
-     },
-     "metadata": {},
-     "output_type": "display_data"
-    },
-    {
-     "data": {
-      "text/plain": []
-     },
-     "execution_count": 6,
-     "metadata": {},
-     "output_type": "execute_result"
-    }
-   ],
-   "source": [
-    "def merge_tokens(tokens):\n",
-    "    merged_tokens = []\n",
-    "    for token in tokens:\n",
-    "        if merged_tokens and token['entity'].startswith('I-') and merged_tokens[-1]['entity'].endswith(token['entity'][2:]):\n",
-    "            # If current token continues the entity of the last one, merge them\n",
-    "            last_token = merged_tokens[-1]\n",
-    "            last_token['word'] += token['word'].replace('##', '')\n",
-    "            last_token['end'] = token['end']\n",
-    "            last_token['score'] = (last_token['score'] + token['score']) / 2\n",
-    "        else:\n",
-    "            # Otherwise, add the token to the list\n",
-    "            merged_tokens.append(token)\n",
-    "\n",
-    "    return merged_tokens\n",
-    "\n",
-    "def ner(input):\n",
-    "    output = get_completion(input, parameters=None, ENDPOINT_URL=API_URL)\n",
-    "    merged_tokens = merge_tokens(output)\n",
-    "    return {\"text\": input, \"entities\": merged_tokens}\n",
-    "\n",
-    "gr.close_all()\n",
-    "demo = gr.Interface(fn=ner,\n",
-    "                    inputs=[gr.Textbox(label=\"Text to find entities\", lines=2)],\n",
-    "                    outputs=[gr.HighlightedText(label=\"Text with entities\")],\n",
-    "                    title=\"NER with dslim/bert-base-NER\",\n",
-    "                    description=\"Find entities using the `dslim/bert-base-NER` model under the hood!\",\n",
-    "                    allow_flagging=\"never\",\n",
-    "                    examples=[\"My name is Andrew, I'm building DeeplearningAI and I live in California\", \"My name is Poli, I live in Vienna and work at HuggingFace\"])\n",
-    "\n",
-    "demo.launch(share=True, server_port=int(os.environ['PORT4']))"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "id": "966668fa",
-   "metadata": {
-    "height": 30
-   },
-   "outputs": [],
-   "source": [
-    "gr.close_all()"
-   ]
-  }
- ],
- "metadata": {
-  "kernelspec": {
-   "display_name": "Python 3 (ipykernel)",
-   "language": "python",
-   "name": "python3"
-  },
-  "language_info": {
-   "codemirror_mode": {
-    "name": "ipython",
-    "version": 3
-   },
-   "file_extension": ".py",
-   "mimetype": "text/x-python",
-   "name": "python",
-   "nbconvert_exporter": "python",
-   "pygments_lexer": "ipython3",
-   "version": "3.9.19"
-  }
- },
- "nbformat": 4,
- "nbformat_minor": 5
-}
+## Ex:4 Development of a Named Entity Recognition (NER) Prototype Using a Fine-Tuned BART Model and Gradio Framework
+
+### AIM:
+To design and develop a prototype application for Named Entity Recognition (NER) by leveraging a fine-tuned BART model and deploying the application using the Gradio framework for user interaction and evaluation.
+
+### PROBLEM STATEMENT:
+Named Entity Recognition (NER) is a fundamental task in Natural Language Processing (NLP) that involves identifying and classifying key entities like names, organizations, locations, and dates in a given text. The goal of this project is to create a user-friendly NER tool that integrates a fine-tuned BART model to demonstrate state-of-the-art capabilities in recognizing entities from textual data.
+### DESIGN STEPS:
+
+#### STEP 1: Data Collection and Preprocessing
+* Collect a labeled dataset for NER tasks. Common datasets include CoNLL-2003, OntoNotes, or a custom dataset.
+* Download or create a dataset with entities labeled in BIO format (Begin, Inside, Outside).
+* Preprocess the text data, tokenizing it for compatibility with BART.
+* Split the data into training, validation, and testing sets.
+#### STEP 2: Fine-Tuning the BART Model
+* Use the Hugging Face transformers library.
+* Load a pre-trained BART model (facebook/bart-base or similar).
+* Modify the model for token classification by adding a classification head.
+* Train the model on the preprocessed dataset using a suitable optimizer and scheduler.
+#### STEP 3: Model Evaluation
+* Use metrics like F1-score, precision, and recall for evaluation.
+* Test the model on unseen data and analyze its performance on different entity types.
+#### STEP 4: Application Development Using Gradio
+* Design the interface with Gradio to allow users to input text and view extracted entities.
+* Integrate the fine-tuned BART model into the Gradio app.
+* Define a backend function that processes user input through the model and displays the results.
+#### STEP 5 :Deployment and Testing
+* Host the application on a cloud platform like Hugging Face Spaces or Google Colab.
+* Collect user feedback to improve usability and performance.
+### PROGRAM:
+```py
+def ner(input):
+    output = get_completion(input, parameters=None, ENDPOINT_URL=API_URL)
+    return {"text": input, "entities": output}
+import gradio as gr
+gr.close_all()
+demo = gr.Interface(fn=ner,
+                    inputs=[gr.Textbox(label="Text to find entities", lines=2)],
+                    outputs=[gr.HighlightedText(label="Text with entities")],
+                    title="NER with dslim/bert-base-NER",
+                    description="Find entities using the `dslim/bert-base-NER` model under the hood!",
+                    allow_flagging="never",
+                    #Here we introduce a new tag, examples, easy to use examples for your application
+                    examples=["My name is Andrew and I live in California", "My name is Poli and work at HuggingFace"])
+demo.launch(share=True, server_port=int(os.environ['PORT3']))
+
+
+def merge_tokens(tokens):
+    merged_tokens = []
+    for token in tokens:
+        if merged_tokens and token['entity'].startswith('I-') and merged_tokens[-1]['entity'].endswith(token['entity'][2:]):
+            # If current token continues the entity of the last one, merge them
+            last_token = merged_tokens[-1]
+            last_token['word'] += token['word'].replace('##', '')
+            last_token['end'] = token['end']
+            last_token['score'] = (last_token['score'] + token['score']) / 2
+        else:
+            # Otherwise, add the token to the list
+            merged_tokens.append(token)
+
+    return merged_tokens
+
+def ner(input):
+    output = get_completion(input, parameters=None, ENDPOINT_URL=API_URL)
+    merged_tokens = merge_tokens(output)
+    return {"text": input, "entities": merged_tokens}
+
+gr.close_all()
+demo = gr.Interface(fn=ner,
+                    inputs=[gr.Textbox(label="Text to find entities", lines=2)],
+                    outputs=[gr.HighlightedText(label="Text with entities")],
+                    title="NER with dslim/bert-base-NER",
+                    description="Find entities using the `dslim/bert-base-NER` model under the hood!",
+                    allow_flagging="never",
+                    examples=["My name is Andrew, I'm building DeeplearningAI and I live in California", "My name is Poli, I live in Vienna and work at HuggingFace"])
+
+demo.launch(share=True, server_port=int(os.environ['PORT4']))
+```
+### OUTPUT:
+![image](https://github.com/user-attachments/assets/9b9124c8-30b6-45b0-82ec-cbe9eb32f64b)
+
+### RESULT:
+Successfully a prototype application for Named Entity Recognition (NER) by leveraging a fine-tuned BART model and deploying the application using the Gradio framework for user interaction and evaluation.
